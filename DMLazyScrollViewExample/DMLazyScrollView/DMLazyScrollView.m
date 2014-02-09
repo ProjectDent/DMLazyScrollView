@@ -200,7 +200,7 @@ enum {
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
     if (isManualAnimating) {
-        if (nil != controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:withSelfDrivenAnimation:)]) {
+        if (controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:withSelfDrivenAnimation:)]) {
             [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin withSelfDrivenAnimation:YES];
         }
         return;

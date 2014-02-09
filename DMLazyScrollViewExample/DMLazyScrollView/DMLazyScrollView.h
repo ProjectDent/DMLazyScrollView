@@ -40,7 +40,7 @@ typedef UIViewController*(^DMLazyScrollViewDataSource)(NSUInteger index);
 @interface DMLazyScrollView : UIScrollView
 
 @property (copy)                DMLazyScrollViewDataSource      dataSource;
-@property (nonatomic, assign)   id<DMLazyScrollViewDelegate>    controlDelegate;
+@property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
 
 @property (nonatomic,assign)    NSUInteger                      numberOfPages;
 @property (readonly)            NSUInteger                      currentPage;
