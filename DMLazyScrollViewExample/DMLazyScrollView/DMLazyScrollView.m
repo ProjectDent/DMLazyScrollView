@@ -139,7 +139,6 @@ enum {
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
     self.pagingEnabled = YES;
-    self.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
     self.delegate = self;
     self.contentSize = CGSizeMake(self.frame.size.width, self.contentSize.height);
     currentPage = NSNotFound;
