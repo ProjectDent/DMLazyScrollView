@@ -250,9 +250,6 @@ enum {
     if (nil != controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:withSelfDrivenAnimation:)]) {
         [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin withSelfDrivenAnimation:NO];
     }
-    else if (nil != controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:)]) {
-        [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin];
-    }
 }
 
 - (void) setCurrentViewController:(NSInteger) index {
