@@ -375,7 +375,7 @@ enum {
 }
 
 - (UIViewController *) loadControllerAtIndex:(NSInteger) index andPlaceAtIndex:(NSInteger) destIndex {
-    UIViewController *viewController = dataSource(index);
+    UIViewController *viewController = [self.dataSource lazyScrollView:self viewControllerAtIndex:index];
     viewController.view.tag = 0;
     
     CGRect viewFrame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);

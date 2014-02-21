@@ -35,11 +35,16 @@ enum {
 - (void)lazyScrollView:(DMLazyScrollView *)pagingView currentPageChanged:(NSInteger)currentPageIndex;
 @end
 
-typedef UIViewController*(^DMLazyScrollViewDataSource)(NSUInteger index);
+@protocol DMLazyScrollViewDataSource <NSObject>
+
+-(UIViewController *)lazyScrollView:(DMLazyScrollView *)scrollView viewControllerAtIndex:(int)index;
+
+@end
 
 @interface DMLazyScrollView : UIScrollView
 
-@property (copy)                DMLazyScrollViewDataSource      dataSource;
+@property (nonatomic, weak) id <DMLazyScrollViewDataSource> dataSource;
+
 @property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
 
 @property (nonatomic,assign)    NSUInteger                      numberOfPages;
