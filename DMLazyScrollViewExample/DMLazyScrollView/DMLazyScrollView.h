@@ -25,8 +25,6 @@ enum {
 @protocol DMLazyScrollViewDelegate <NSObject>
 @optional
 - (void)lazyScrollViewWillBeginDragging:(DMLazyScrollView *)pagingView;
-//Called when it scrolls, except from as the result of self-driven animation.
-- (void)lazyScrollViewDidScroll:(DMLazyScrollView *)pagingView at:(CGPoint) visibleOffset;
 //Called whenever it scrolls: through user manipulation, setup, or self-driven animation.
 - (void)lazyScrollViewDidScroll:(DMLazyScrollView *)pagingView at:(CGPoint) visibleOffset withSelfDrivenAnimation:(BOOL)selfDrivenAnimation;
 - (void)lazyScrollViewDidEndDragging:(DMLazyScrollView *)pagingView;
@@ -35,11 +33,16 @@ enum {
 - (void)lazyScrollView:(DMLazyScrollView *)pagingView currentPageChanged:(NSInteger)currentPageIndex;
 @end
 
-typedef UIViewController*(^DMLazyScrollViewDataSource)(NSUInteger index);
+@protocol DMLazyScrollViewDataSource <NSObject>
+
+-(UIViewController *)lazyScrollView:(DMLazyScrollView *)scrollView viewControllerAtIndex:(int)index;
+
+@end
 
 @interface DMLazyScrollView : UIScrollView
 
-@property (copy)                DMLazyScrollViewDataSource      dataSource;
+@property (nonatomic, weak) id <DMLazyScrollViewDataSource> dataSource;
+
 @property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
 
 @property (nonatomic,assign)    NSUInteger                      numberOfPages;

@@ -250,9 +250,6 @@ enum {
     if (nil != controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:withSelfDrivenAnimation:)]) {
         [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin withSelfDrivenAnimation:NO];
     }
-    else if (nil != controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:)]) {
-        [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin];
-    }
 }
 
 - (void) setCurrentViewController:(NSInteger) index {
@@ -375,7 +372,7 @@ enum {
 }
 
 - (UIViewController *) loadControllerAtIndex:(NSInteger) index andPlaceAtIndex:(NSInteger) destIndex {
-    UIViewController *viewController = dataSource(index);
+    UIViewController *viewController = [self.dataSource lazyScrollView:self viewControllerAtIndex:index];
     viewController.view.tag = 0;
     
     CGRect viewFrame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
