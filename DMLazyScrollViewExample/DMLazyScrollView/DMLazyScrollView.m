@@ -11,11 +11,86 @@
 
 @interface DMLazyScrollView() <UIScrollViewDelegate>
 
+@property (nonatomic, strong) UIView *previousView;
+@property (nonatomic, strong) UIView *currentView;
+@property (nonatomic, strong) UIView *nextView;
+
+@property (nonatomic,assign) int numberOfPages;
+
 @end
 
 @implementation DMLazyScrollView
 
+#pragma mark - Initialisation methods
 
+-(id)init {
+    self = [super init];
+    if (self) {
+        self.pagingEnabled = YES;
+    }
+    return self;
+}
+
+#pragma mark - DataSource methods
+
+-(void)reloadData {
+    
+    self.numberOfPages = [self.dataSource numberOfPagesInLazyScrollView:self];
+    
+    if (self.currentPage > 0) {
+        self.previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage - 1].view;
+        [self addSubview:self.previousView];
+    }
+    else {
+        self.previousView = nil;
+    }
+    
+    self.currentView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage].view;
+    [self addSubview:self.currentView];
+    
+    if (self.currentPage < self.numberOfPages - 1) {
+        self.nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage + 1].view;
+        [self addSubview:self.nextView];
+    }
+    else {
+        self.nextView = nil;
+    }
+    
+    [self setNeedsLayout];
+}
+
+#pragma mark - Layout methods
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    
+    self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
+    
+    CGRect previousViewFrame = CGRectMake(self.frame.size.width * (self.currentPage - 1), 0, self.frame.size.width, self.frame.size.height);
+    self.previousView.frame = previousViewFrame;
+    
+    CGRect currentViewFrame = CGRectMake(self.frame.size.width * self.currentPage, 0, self.frame.size.width, self.frame.size.height);
+    self.currentView.frame = currentViewFrame;
+    
+    CGRect nextViewFrame = CGRectMake(self.frame.size.width * (self.currentPage + 1), 0, self.frame.size.width, self.frame.size.height);
+    self.nextView.frame = nextViewFrame;
+}
+
+#pragma mark - Setter methods
+
+-(void)setCurrentPage:(NSUInteger)currentPage animated:(BOOL)animated {
+    _currentPage = currentPage;
+}
+
+-(void)setCurrentPage:(NSUInteger)currentPage {
+    [self setCurrentPage:currentPage animated:NO];
+}
+
+-(void)setDataSource:(id<DMLazyScrollViewDataSource>)dataSource {
+    _dataSource = dataSource;
+    
+    [self reloadData];
+}
 
 @end
 

@@ -25,6 +25,7 @@
 @protocol DMLazyScrollViewDataSource <NSObject>
 
 -(UIViewController *)lazyScrollView:(DMLazyScrollView *)scrollView viewControllerAtIndex:(int)index;
+-(int)numberOfPagesInLazyScrollView:(DMLazyScrollView *)scrollView;
 
 @end
 
@@ -34,7 +35,6 @@
 
 @property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
 
-@property (nonatomic,assign)    NSUInteger                      numberOfPages;
 @property (readonly)            NSUInteger                      currentPage;
 
 -(void)setCurrentPage:(NSUInteger)currentPage animated:(BOOL)animated;
