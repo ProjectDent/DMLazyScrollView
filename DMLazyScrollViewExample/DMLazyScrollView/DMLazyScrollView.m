@@ -18,8 +18,6 @@
 
 @property (nonatomic, strong) NSMutableDictionary *views;
 
-@property (nonatomic) float currentPageOffset;
-
 @end
 
 @implementation DMLazyScrollView
@@ -33,7 +31,7 @@
         self.delegate = self;
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
-        self.infiniteScroll = YES;
+        self.infiniteScroll = NO;
         self.currentPage = 0;
         
         self.views = [NSMutableDictionary new];
@@ -46,11 +44,36 @@
 -(void)reloadData {
     self.numberOfPages = [self.dataSource numberOfPagesInLazyScrollView:self];
     
-    [self updatePages];
+    //[self updatePages];
+}
+/*
+-(void)updatePageOffset {
+    if (!self.infiniteScroll) {
+        if (self.frame.size.width == 0) {
+            _currentPage = 0;
+        }
+        else {
+            _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+        }
+        
+        self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * _currentPage);
+    }
+    else {
+        self.currentPageOffset = self.contentOffset.x - self.frame.size.width;
+    }
+}
+
+-(void)setupContentOffset {
+    int pagesInset = self.currentPage;
+    
+    if (self.infiniteScroll) {
+        pagesInset = pagesInset + 1;
+    }
+    
+    self.contentOffset = CGPointMake(self.frame.size.width * pagesInset, 0);
 }
 
 -(void)updatePages {
-
     int firstVisibleViewIndex = self.currentPage;
     
     if (self.currentPageOffset < 0) {
@@ -104,34 +127,80 @@
     }
     
     [self setNeedsLayout];
-}
-
--(void)updatePageOffset {
-    
-    if (self.frame.size.width == 0) {
-        _currentPage = 0;
-    }
-    else {
-        _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
-    }
-    
-    self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * _currentPage);
-}
-
--(void)setupContentOffset {
-    int pagesInset = self.currentPage;
-    
-    if (self.infiniteScroll) {
-        pagesInset = pagesInset + 1;
-    }
-    
-    self.contentOffset = CGPointMake(self.frame.size.width * pagesInset, 0);
-}
+}*/
 
 #pragma mark - Layout methods
 
 -(void)layoutSubviews {
     [super layoutSubviews];
+    
+    int firstVisibleViewIndex = self.currentPage;
+    
+    if (!self.infiniteScroll) {
+        self.contentSize = CGSizeMake(self.numberOfPages * self.frame.size.width, self.frame.size.height);
+        if (self.contentOffset.x < self.frame.size.width * self.currentPage) {
+            firstVisibleViewIndex = self.currentPage - 1;
+        }
+        else {
+            firstVisibleViewIndex = self.currentPage;
+        }
+    }
+    else {
+        firstVisibleViewIndex = self.currentPage;
+    }
+    
+    if (firstVisibleViewIndex >= 0) {
+        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
+        UIView *previousView;
+        if ([self.views objectForKey:key]) {
+            previousView = [self.views objectForKey:key];
+        } else {
+            previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
+            [self.views setObject:previousView forKey:key];
+        }
+        
+        if (self.previousView != previousView && self.previousView != self.nextView) {
+            [self.previousView removeFromSuperview];
+        }
+        
+        self.previousView = previousView;
+        
+        if (self.previousView.superview != self) {
+            [self addSubview:self.previousView];
+        }
+    }
+    
+    self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+    
+    if (firstVisibleViewIndex + 1 < self.numberOfPages) {
+        
+        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex + 1];
+        UIView *nextView;
+        if ([self.views objectForKey:key]) {
+            nextView = [self.views objectForKey:key];
+        } else {
+            nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:firstVisibleViewIndex + 1].view;
+            [self.views setObject:nextView forKey:key];
+        }
+        
+        if (self.nextView != nextView && self.nextView != self.previousView) {
+            [self.nextView removeFromSuperview];
+        }
+        
+        self.nextView = nextView;
+        
+        if (self.nextView.superview != self) {
+            [self addSubview:self.nextView];
+        }
+    }
+    else {
+        self.nextView = nil;
+    }
+    
+    self.nextView.frame = CGRectMake((firstVisibleViewIndex + 1) * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+    
+    
+    /*
     
     int numberOfPagesToSuitWithWidth = self.numberOfPages;
     
@@ -151,8 +220,13 @@
     }
     
     if (self.infiniteScroll) {
-        previousViewFrameX = self.frame.size.width;
-        nextViewFrameX = self.frame.size.width * 2;
+        if (self.currentPageOffset < 0) {
+            previousViewFrameX = 0;
+            nextViewFrameX = self.frame.size.width;
+        } else {
+            previousViewFrameX = 0;
+            nextViewFrameX = self.frame.size.width;
+        }
     }
     else {
         previousViewFrameX = self.frame.size.width * indexOfPreviousView;
@@ -163,33 +237,41 @@
     self.previousView.frame = previousViewFrame;
     
     CGRect nextViewFrame = CGRectMake(nextViewFrameX, 0, self.frame.size.width, self.frame.size.height);
-    self.nextView.frame = nextViewFrame;
+    self.nextView.frame = nextViewFrame;*/
 }
 
 #pragma mark - UIScrollViewDelegate methods
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [self updatePageOffset];
+    [self setNeedsLayout];
 }
 
 #pragma mark - Setter methods
 
 -(void)setFrame:(CGRect)frame {
     [super setFrame:frame];
-    
+    /*
     [self setupContentOffset];
     [self updatePageOffset];
-    [self updatePages];
+    [self updatePages];*/
+    
+    [self setNeedsLayout];
 }
 
 -(void)setCurrentPage:(int)currentPage animated:(BOOL)animated {
     _currentPage = currentPage;
-    
+    /*
     [self setupContentOffset];
     
     [self updatePageOffset];
     
-    [self updatePages];
+    [self updatePages];*/
+    
+    if (!self.infiniteScroll) {
+        self.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
+    }
+    
+    
 }
 
 -(void)setCurrentPage:(int)currentPage {
@@ -202,10 +284,13 @@
     [self reloadData];
 }
 
--(void)setCurrentPageOffset:(float)currentPageOffset {
-    _currentPageOffset = currentPageOffset;
+-(void)setContentOffset:(CGPoint)contentOffset {
+    [super setContentOffset:contentOffset];
     
-    [self updatePages];
+    NSLog(@"set content offset");
+    _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+    
+    [self setNeedsLayout];
 }
 
 @end

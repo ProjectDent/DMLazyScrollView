@@ -64,6 +64,7 @@
                                                       saturation: (CGFloat)0.8
                                                        brightness: (CGFloat)0.8
                                                      alpha: 0.5];
+    contr.view.tag = index;
         
         UILabel* label = [[UILabel alloc] initWithFrame:contr.view.bounds];
         label.backgroundColor = [UIColor clearColor];
