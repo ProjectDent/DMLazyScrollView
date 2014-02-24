@@ -24,7 +24,10 @@
     // PREPARE LAZY VIEW
     lazyScrollView = [[DMLazyScrollView alloc] init];
     lazyScrollView.dataSource = self;
-    lazyScrollView.currentPage = 4;
+    lazyScrollView.layer.masksToBounds = NO;
+    lazyScrollView.layer.borderColor = [UIColor blackColor].CGColor;
+    lazyScrollView.layer.borderWidth = 2.0;
+    //lazyScrollView.currentPage = 4;
     //[lazyScrollView setEnableCircularScroll:YES];
     //[lazyScrollView setAutoPlay:YES];
     
@@ -60,7 +63,7 @@
         contr.view.backgroundColor = [UIColor colorWithHue: (CGFloat)index * 0.1
                                                       saturation: (CGFloat)0.8
                                                        brightness: (CGFloat)0.8
-                                                     alpha: 1.0f];
+                                                     alpha: 0.5];
         
         UILabel* label = [[UILabel alloc] initWithFrame:contr.view.bounds];
         label.backgroundColor = [UIColor clearColor];

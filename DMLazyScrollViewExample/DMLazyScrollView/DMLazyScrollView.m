@@ -16,9 +16,9 @@
 
 @property (nonatomic,assign) int numberOfPages;
 
-@property (nonatomic) int firstVisibleIndex;
-
 @property (nonatomic, strong) NSMutableDictionary *views;
+
+@property (nonatomic) float currentPageOffset;
 
 @end
 
@@ -49,14 +49,20 @@
 }
 
 -(void)updatePages {
+
+    int firstVisibleViewIndex = self.currentPage;
     
-    if (self.firstVisibleIndex >= 0) {
-        NSString *key = [NSString stringWithFormat:@"%i", self.firstVisibleIndex];
+    if (self.currentPageOffset < 0) {
+        firstVisibleViewIndex = self.currentPage - 1;
+    }
+    
+    if (firstVisibleViewIndex >= 0) {
+        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
         UIView *previousView;
         if ([self.views objectForKey:key]) {
             previousView = [self.views objectForKey:key];
         } else {
-            previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex].view;
+            previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
             [self.views setObject:previousView forKey:key];
         }
         
@@ -70,18 +76,15 @@
             [self addSubview:self.previousView];
         }
     }
-    else {
-        self.previousView = nil;
-    }
     
-    if (self.firstVisibleIndex + 1 < self.numberOfPages) {
+    if (firstVisibleViewIndex + 1 < self.numberOfPages) {
         
-        NSString *key = [NSString stringWithFormat:@"%i", self.firstVisibleIndex + 1];
+        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex + 1];
         UIView *nextView;
         if ([self.views objectForKey:key]) {
             nextView = [self.views objectForKey:key];
         } else {
-            nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex + 1].view;
+            nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:firstVisibleViewIndex + 1].view;
             [self.views setObject:nextView forKey:key];
         }
         
@@ -102,12 +105,21 @@
     [self setNeedsLayout];
 }
 
+-(void)updatePageOffset {
+    _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+    
+    self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * _currentPage);
+}
+/*
 -(void)updateFirstVisibleIndex {
+    
+    
     float currentPosition = self.contentOffset.x / self.frame.size.width;
     
     int firstVisibleIndex;
     
     if (self.infiniteScroll) {
+        self.currentPageOffset = self.frame.size.width - self.contentOffset.x;
         if (currentPosition < 1.0) {
             firstVisibleIndex = self.currentPage - 1;
         }
@@ -116,11 +128,12 @@
         }
     }
     else {
+        self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * self.currentPage);
         firstVisibleIndex = floorf(currentPosition);
     }
     
     self.firstVisibleIndex = firstVisibleIndex;
-}
+}*/
 
 -(void)setupContentOffset {
     int pagesInset = self.currentPage;
@@ -148,13 +161,20 @@
     float previousViewFrameX;
     float nextViewFrameX;
     
+    int indexOfPreviousView = self.currentPage;
+    
+    if (self.currentPageOffset < 0) {
+        indexOfPreviousView = indexOfPreviousView - 1;
+    }
+    
+    
     if (self.infiniteScroll) {
-        previousViewFrameX = 0;
-        nextViewFrameX = self.frame.size.width;
+        previousViewFrameX = self.frame.size.width;
+        nextViewFrameX = self.frame.size.width * 2;
     }
     else {
-        previousViewFrameX = self.frame.size.width * (self.firstVisibleIndex);
-        nextViewFrameX = self.frame.size.width * (self.firstVisibleIndex + 1);
+        previousViewFrameX = self.frame.size.width * indexOfPreviousView;
+        nextViewFrameX = self.frame.size.width * (indexOfPreviousView + 1);
     }
     
     CGRect previousViewFrame = CGRectMake(previousViewFrameX, 0, self.frame.size.width, self.frame.size.height);
@@ -167,7 +187,7 @@
 #pragma mark - UIScrollViewDelegate methods
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [self updateFirstVisibleIndex];
+    [self updatePageOffset];
 }
 
 #pragma mark - Setter methods
@@ -176,17 +196,7 @@
     [super setFrame:frame];
     
     [self setupContentOffset];
-    [self updateFirstVisibleIndex];
-    [self updatePages];
-}
-
--(void)setFirstVisibleIndex:(int)firstVisibleIndex {
-    if (firstVisibleIndex == _firstVisibleIndex) {
-        return;
-    }
-    
-    _firstVisibleIndex = firstVisibleIndex;
-    
+    [self updatePageOffset];
     [self updatePages];
 }
 
@@ -195,7 +205,7 @@
     
     [self setupContentOffset];
     
-    [self updateFirstVisibleIndex];
+    [self updatePageOffset];
     
     [self updatePages];
 }
@@ -208,6 +218,12 @@
     _dataSource = dataSource;
     
     [self reloadData];
+}
+
+-(void)setCurrentPageOffset:(float)currentPageOffset {
+    _currentPageOffset = currentPageOffset;
+    
+    [self updatePages];
 }
 
 @end
