@@ -9,31 +9,17 @@
 
 #import "DMLazyScrollView.h"
 
-enum {
-    DMLazyScrollViewScrollDirectionBackward     = 0,
-    DMLazyScrollViewScrollDirectionForward      = 1
-}; typedef NSUInteger DMLazyScrollViewScrollDirection;
-
-#define kDMLazyScrollViewTransitionDuration     0.4
-
-@interface DMLazyScrollView() <UIScrollViewDelegate> {
-    NSUInteger      numberOfPages;
-    NSUInteger      currentPage;
-    BOOL            isManualAnimating;
-    BOOL            circularScrollEnabled;
-}
-@property (nonatomic, strong) NSTimer* timer_autoPlay;
+@interface DMLazyScrollView() <UIScrollViewDelegate>
 
 @end
 
 @implementation DMLazyScrollView
 
-@synthesize numberOfPages,currentPage;
-@synthesize dataSource,controlDelegate;
-@synthesize autoPlay = _autoPlay;
-@synthesize timer_autoPlay = _timer_autoPlay;
-@synthesize autoPlayTime = _autoPlayTime;
 
+
+@end
+
+/*
 - (id)init {
     return [self initWithFrame:CGRectZero];
 }
@@ -220,6 +206,7 @@ enum {
 }
 
 - (void) scrollViewDidScroll:(UIScrollView *)scrollView {
+ 
     if (isManualAnimating) {
         if (controlDelegate && [controlDelegate respondsToSelector:@selector(lazyScrollViewDidScroll:at:withSelfDrivenAnimation:)]) {
             [controlDelegate lazyScrollViewDidScroll:self at:[self visibleRect].origin withSelfDrivenAnimation:YES];
@@ -419,4 +406,4 @@ enum {
         [controlDelegate lazyScrollViewDidEndDecelerating:self atPageIndex:self.currentPage];
 }
 
-@end
+@end*/
