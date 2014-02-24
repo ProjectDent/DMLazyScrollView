@@ -12,10 +12,11 @@
 @interface DMLazyScrollView() <UIScrollViewDelegate>
 
 @property (nonatomic, strong) UIView *previousView;
-@property (nonatomic, strong) UIView *currentView;
 @property (nonatomic, strong) UIView *nextView;
 
 @property (nonatomic,assign) int numberOfPages;
+
+@property (nonatomic) int firstVisibleIndex;
 
 @end
 
@@ -42,24 +43,16 @@
 }
 
 -(void)updatePages {
-    if (self.currentPage > 0) {
-        self.previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage - 1].view;
+    if (self.firstVisibleIndex >= 0) {
+        self.previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex].view;
         [self addSubview:self.previousView];
     }
     else {
         self.previousView = nil;
     }
     
-    if (self.currentPage >= 0 && self.currentPage < self.numberOfPages) {
-        self.currentView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage].view;
-        [self addSubview:self.currentView];
-    }
-    else {
-        self.currentView = nil;
-    }
-    
-    if (self.currentPage < self.numberOfPages - 1) {
-        self.nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage + 1].view;
+    if (self.firstVisibleIndex + 1 < self.numberOfPages) {
+        self.nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex + 1].view;
         [self addSubview:self.nextView];
     }
     else {
@@ -76,13 +69,10 @@
     
     self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
     
-    CGRect previousViewFrame = CGRectMake(self.frame.size.width * (self.currentPage - 1), 0, self.frame.size.width, self.frame.size.height);
+    CGRect previousViewFrame = CGRectMake(self.frame.size.width * (self.firstVisibleIndex), 0, self.frame.size.width, self.frame.size.height);
     self.previousView.frame = previousViewFrame;
     
-    CGRect currentViewFrame = CGRectMake(self.frame.size.width * self.currentPage, 0, self.frame.size.width, self.frame.size.height);
-    self.currentView.frame = currentViewFrame;
-    
-    CGRect nextViewFrame = CGRectMake(self.frame.size.width * (self.currentPage + 1), 0, self.frame.size.width, self.frame.size.height);
+    CGRect nextViewFrame = CGRectMake(self.frame.size.width * (self.firstVisibleIndex + 1), 0, self.frame.size.width, self.frame.size.height);
     self.nextView.frame = nextViewFrame;
 }
 
@@ -91,21 +81,30 @@
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     float currentPosition = self.contentOffset.x / self.frame.size.width;
     
-    if (floorf(currentPosition) != self.currentPage) {
-        self.currentPage = floorf(currentPosition);
-        NSLog(@"set current page: %i", self.currentPage);
-    }
+    self.firstVisibleIndex = floorf(currentPosition);
 }
 
 #pragma mark - Setter methods
 
--(void)setCurrentPage:(NSUInteger)currentPage animated:(BOOL)animated {
-    _currentPage = currentPage;
+-(void)setFirstVisibleIndex:(int)firstVisibleIndex {
+    if (firstVisibleIndex == _firstVisibleIndex) {
+        return;
+    }
+    
+    _firstVisibleIndex = firstVisibleIndex;
     
     [self updatePages];
 }
 
--(void)setCurrentPage:(NSUInteger)currentPage {
+-(void)setCurrentPage:(int)currentPage animated:(BOOL)animated {
+    _currentPage = currentPage;
+    
+    self.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
+    
+    [self updatePages];
+}
+
+-(void)setCurrentPage:(int)currentPage {
     [self setCurrentPage:currentPage animated:NO];
 }
 
