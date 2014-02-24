@@ -29,6 +29,8 @@
     if (self) {
         self.pagingEnabled = YES;
         self.delegate = self;
+        self.showsHorizontalScrollIndicator = NO;
+        self.showsVerticalScrollIndicator = NO;
     }
     return self;
 }
@@ -36,7 +38,6 @@
 #pragma mark - DataSource methods
 
 -(void)reloadData {
-    
     self.numberOfPages = [self.dataSource numberOfPagesInLazyScrollView:self];
     
     [self updatePages];
@@ -62,6 +63,16 @@
     [self setNeedsLayout];
 }
 
+-(void)updateFirstVisibleIndex {
+    float currentPosition = self.contentOffset.x / self.frame.size.width;
+    
+    self.firstVisibleIndex = floorf(currentPosition);
+}
+
+-(void)setupContentOffset {
+    self.contentOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
+}
+
 #pragma mark - Layout methods
 
 -(void)layoutSubviews {
@@ -79,12 +90,18 @@
 #pragma mark - UIScrollViewDelegate methods
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    float currentPosition = self.contentOffset.x / self.frame.size.width;
-    
-    self.firstVisibleIndex = floorf(currentPosition);
+    [self updateFirstVisibleIndex];
 }
 
 #pragma mark - Setter methods
+
+-(void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    
+    [self setupContentOffset];
+    [self updateFirstVisibleIndex];
+    [self updatePages];
+}
 
 -(void)setFirstVisibleIndex:(int)firstVisibleIndex {
     if (firstVisibleIndex == _firstVisibleIndex) {
@@ -99,7 +116,9 @@
 -(void)setCurrentPage:(int)currentPage animated:(BOOL)animated {
     _currentPage = currentPage;
     
-    self.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
+    [self setupContentOffset];
+    
+    [self updateFirstVisibleIndex];
     
     [self updatePages];
 }

@@ -24,6 +24,7 @@
     // PREPARE LAZY VIEW
     lazyScrollView = [[DMLazyScrollView alloc] init];
     lazyScrollView.dataSource = self;
+    lazyScrollView.currentPage = 4;
     //[lazyScrollView setEnableCircularScroll:YES];
     //[lazyScrollView setAutoPlay:YES];
     
@@ -66,6 +67,7 @@
         label.text = [NSString stringWithFormat:@"%d",index];
         label.textAlignment = NSTextAlignmentCenter;
         label.font = [UIFont boldSystemFontOfSize:50];
+        label.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
         [contr.view addSubview:label];
         
         [viewControllerArray replaceObjectAtIndex:index withObject:contr];
@@ -81,7 +83,7 @@
 -(void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    lazyScrollView.frame = self.view.bounds;
+    lazyScrollView.frame = CGRectMake(200, 200, 200, 200);
 }
 
 /*
