@@ -33,7 +33,8 @@
         self.delegate = self;
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
-        self.infiniteScroll = NO;
+        self.infiniteScroll = YES;
+        self.currentPage = 0;
         
         self.views = [NSMutableDictionary new];
     }
@@ -106,34 +107,16 @@
 }
 
 -(void)updatePageOffset {
-    _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+    
+    if (self.frame.size.width == 0) {
+        _currentPage = 0;
+    }
+    else {
+        _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+    }
     
     self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * _currentPage);
 }
-/*
--(void)updateFirstVisibleIndex {
-    
-    
-    float currentPosition = self.contentOffset.x / self.frame.size.width;
-    
-    int firstVisibleIndex;
-    
-    if (self.infiniteScroll) {
-        self.currentPageOffset = self.frame.size.width - self.contentOffset.x;
-        if (currentPosition < 1.0) {
-            firstVisibleIndex = self.currentPage - 1;
-        }
-        else {
-            firstVisibleIndex = self.currentPage;
-        }
-    }
-    else {
-        self.currentPageOffset = self.contentOffset.x - (self.frame.size.width * self.currentPage);
-        firstVisibleIndex = floorf(currentPosition);
-    }
-    
-    self.firstVisibleIndex = firstVisibleIndex;
-}*/
 
 -(void)setupContentOffset {
     int pagesInset = self.currentPage;
@@ -166,7 +149,6 @@
     if (self.currentPageOffset < 0) {
         indexOfPreviousView = indexOfPreviousView - 1;
     }
-    
     
     if (self.infiniteScroll) {
         previousViewFrameX = self.frame.size.width;
