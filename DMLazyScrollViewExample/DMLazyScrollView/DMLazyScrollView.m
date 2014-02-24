@@ -18,6 +18,8 @@
 
 @property (nonatomic) int firstVisibleIndex;
 
+@property (nonatomic, strong) NSMutableDictionary *views;
+
 @end
 
 @implementation DMLazyScrollView
@@ -31,6 +33,9 @@
         self.delegate = self;
         self.showsHorizontalScrollIndicator = NO;
         self.showsVerticalScrollIndicator = NO;
+        self.infiniteScroll = NO;
+        
+        self.views = [NSMutableDictionary new];
     }
     return self;
 }
@@ -44,17 +49,51 @@
 }
 
 -(void)updatePages {
+    
     if (self.firstVisibleIndex >= 0) {
-        self.previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex].view;
-        [self addSubview:self.previousView];
+        NSString *key = [NSString stringWithFormat:@"%i", self.firstVisibleIndex];
+        UIView *previousView;
+        if ([self.views objectForKey:key]) {
+            previousView = [self.views objectForKey:key];
+        } else {
+            previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex].view;
+            [self.views setObject:previousView forKey:key];
+        }
+        
+        if (self.previousView != previousView && self.previousView != self.nextView) {
+            [self.previousView removeFromSuperview];
+        }
+        
+        self.previousView = previousView;
+        
+        if (self.previousView.superview != self) {
+            [self addSubview:self.previousView];
+        }
     }
     else {
         self.previousView = nil;
     }
     
     if (self.firstVisibleIndex + 1 < self.numberOfPages) {
-        self.nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex + 1].view;
-        [self addSubview:self.nextView];
+        
+        NSString *key = [NSString stringWithFormat:@"%i", self.firstVisibleIndex + 1];
+        UIView *nextView;
+        if ([self.views objectForKey:key]) {
+            nextView = [self.views objectForKey:key];
+        } else {
+            nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.firstVisibleIndex + 1].view;
+            [self.views setObject:nextView forKey:key];
+        }
+        
+        if (self.nextView != nextView && self.nextView != self.previousView) {
+            [self.nextView removeFromSuperview];
+        }
+        
+        self.nextView = nextView;
+        
+        if (self.nextView.superview != self) {
+            [self addSubview:self.nextView];
+        }
     }
     else {
         self.nextView = nil;
@@ -66,11 +105,31 @@
 -(void)updateFirstVisibleIndex {
     float currentPosition = self.contentOffset.x / self.frame.size.width;
     
-    self.firstVisibleIndex = floorf(currentPosition);
+    int firstVisibleIndex;
+    
+    if (self.infiniteScroll) {
+        if (currentPosition < 1.0) {
+            firstVisibleIndex = self.currentPage - 1;
+        }
+        else {
+            firstVisibleIndex = self.currentPage;
+        }
+    }
+    else {
+        firstVisibleIndex = floorf(currentPosition);
+    }
+    
+    self.firstVisibleIndex = firstVisibleIndex;
 }
 
 -(void)setupContentOffset {
-    self.contentOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
+    int pagesInset = self.currentPage;
+    
+    if (self.infiniteScroll) {
+        pagesInset = pagesInset + 1;
+    }
+    
+    self.contentOffset = CGPointMake(self.frame.size.width * pagesInset, 0);
 }
 
 #pragma mark - Layout methods
@@ -78,12 +137,30 @@
 -(void)layoutSubviews {
     [super layoutSubviews];
     
-    self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
+    int numberOfPagesToSuitWithWidth = self.numberOfPages;
     
-    CGRect previousViewFrame = CGRectMake(self.frame.size.width * (self.firstVisibleIndex), 0, self.frame.size.width, self.frame.size.height);
+    if (self.infiniteScroll) {
+        numberOfPagesToSuitWithWidth = 3;
+    }
+    
+    self.contentSize = CGSizeMake(self.frame.size.width * numberOfPagesToSuitWithWidth, self.frame.size.height);
+    
+    float previousViewFrameX;
+    float nextViewFrameX;
+    
+    if (self.infiniteScroll) {
+        previousViewFrameX = 0;
+        nextViewFrameX = self.frame.size.width;
+    }
+    else {
+        previousViewFrameX = self.frame.size.width * (self.firstVisibleIndex);
+        nextViewFrameX = self.frame.size.width * (self.firstVisibleIndex + 1);
+    }
+    
+    CGRect previousViewFrame = CGRectMake(previousViewFrameX, 0, self.frame.size.width, self.frame.size.height);
     self.previousView.frame = previousViewFrame;
     
-    CGRect nextViewFrame = CGRectMake(self.frame.size.width * (self.firstVisibleIndex + 1), 0, self.frame.size.width, self.frame.size.height);
+    CGRect nextViewFrame = CGRectMake(nextViewFrameX, 0, self.frame.size.width, self.frame.size.height);
     self.nextView.frame = nextViewFrame;
 }
 
