@@ -165,7 +165,7 @@ enum {
 }
 
 - (void) reloadData {
-    [self setCurrentViewController:0];
+    [self forceSetCurrentViewController:0];
     [self resetAutoPlay];
 }
 
