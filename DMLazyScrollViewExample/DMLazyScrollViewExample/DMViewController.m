@@ -9,8 +9,6 @@
 #import "DMViewController.h"
 #import "DMLazyScrollView.h"
 
-#define ARC4RANDOM_MAX	0x100000000
-
 
 @interface DMViewController () <DMLazyScrollViewDelegate, DMLazyScrollViewDataSource> {
     DMLazyScrollView* lazyScrollView;
@@ -23,15 +21,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    // PREPARE PAGES
-    NSUInteger numberOfPages = 10;
-    viewControllerArray = [[NSMutableArray alloc] initWithCapacity:numberOfPages];
-    for (NSUInteger k = 0; k < numberOfPages; ++k) {
-        [viewControllerArray addObject:[NSNull null]];
-    }
-    
     // PREPARE LAZY VIEW
-    CGRect rect = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height-50);
     lazyScrollView = [[DMLazyScrollView alloc] init];
     lazyScrollView.dataSource = self;
     //[lazyScrollView setEnableCircularScroll:YES];
@@ -66,9 +56,9 @@
     id res = [viewControllerArray objectAtIndex:index];
     if (res == [NSNull null]) {*/
         UIViewController *contr = [[UIViewController alloc] init];
-        contr.view.backgroundColor = [UIColor colorWithRed: (CGFloat)arc4random()/ARC4RANDOM_MAX
-                                                      green: (CGFloat)arc4random()/ARC4RANDOM_MAX
-                                                       blue: (CGFloat)arc4random()/ARC4RANDOM_MAX
+        contr.view.backgroundColor = [UIColor colorWithHue: (CGFloat)index * 0.1
+                                                      saturation: (CGFloat)0.8
+                                                       brightness: (CGFloat)0.8
                                                      alpha: 1.0f];
         
         UILabel* label = [[UILabel alloc] initWithFrame:contr.view.bounds];

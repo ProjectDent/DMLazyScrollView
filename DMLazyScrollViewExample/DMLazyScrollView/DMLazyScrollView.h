@@ -35,9 +35,9 @@
 
 @property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
 
-@property (readonly)            NSUInteger                      currentPage;
+@property (readonly)            int                      currentPage;
 
--(void)setCurrentPage:(NSUInteger)currentPage animated:(BOOL)animated;
+-(void)setCurrentPage:(int)currentPage animated:(BOOL)animated;
 
 
 

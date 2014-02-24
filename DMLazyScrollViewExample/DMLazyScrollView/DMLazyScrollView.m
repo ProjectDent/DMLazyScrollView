@@ -27,6 +27,7 @@
     self = [super init];
     if (self) {
         self.pagingEnabled = YES;
+        self.delegate = self;
     }
     return self;
 }
@@ -37,6 +38,10 @@
     
     self.numberOfPages = [self.dataSource numberOfPagesInLazyScrollView:self];
     
+    [self updatePages];
+}
+
+-(void)updatePages {
     if (self.currentPage > 0) {
         self.previousView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage - 1].view;
         [self addSubview:self.previousView];
@@ -45,8 +50,13 @@
         self.previousView = nil;
     }
     
-    self.currentView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage].view;
-    [self addSubview:self.currentView];
+    if (self.currentPage >= 0 && self.currentPage < self.numberOfPages) {
+        self.currentView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage].view;
+        [self addSubview:self.currentView];
+    }
+    else {
+        self.currentView = nil;
+    }
     
     if (self.currentPage < self.numberOfPages - 1) {
         self.nextView = [self.dataSource lazyScrollView:self viewControllerAtIndex:self.currentPage + 1].view;
@@ -76,10 +86,23 @@
     self.nextView.frame = nextViewFrame;
 }
 
+#pragma mark - UIScrollViewDelegate methods
+
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    float currentPosition = self.contentOffset.x / self.frame.size.width;
+    
+    if (floorf(currentPosition) != self.currentPage) {
+        self.currentPage = floorf(currentPosition);
+        NSLog(@"set current page: %i", self.currentPage);
+    }
+}
+
 #pragma mark - Setter methods
 
 -(void)setCurrentPage:(NSUInteger)currentPage animated:(BOOL)animated {
     _currentPage = currentPage;
+    
+    [self updatePages];
 }
 
 -(void)setCurrentPage:(NSUInteger)currentPage {
