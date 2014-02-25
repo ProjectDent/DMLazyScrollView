@@ -18,6 +18,8 @@
 
 @property (nonatomic) int fakeCurrentPage;
 
+@property (nonatomic) BOOL userIsInteractingWithView;
+
 @end
 
 @implementation PDPagingScrollView
@@ -189,6 +191,84 @@
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [self setNeedsLayout];
     
+}
+
+-(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
+    self.userIsInteractingWithView = YES;
+}
+
+-(void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate {
+    self.userIsInteractingWithView = NO;
+}
+
+#pragma mark - Animation methods
+
+-(void)scrollToNextPage {
+    int nextPageIndex = self.currentPage + 1;
+    CGPoint currentPageOffset;
+    CGPoint nextPageOffset;
+    
+    if (self.infiniteScroll) {
+        currentPageOffset = CGPointMake(self.frame.size.width, 0);
+        nextPageOffset = CGPointMake(self.frame.size.width * 2, 0);
+    }
+    else {
+        currentPageOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
+        nextPageOffset = CGPointMake(self.frame.size.width * nextPageIndex, 0);
+    }
+    
+    if (self.userIsInteractingWithView) {
+        self.contentOffset = nextPageOffset;
+        self.currentPage = nextPageIndex;
+    }
+    else {
+        self.userInteractionEnabled = NO;
+        super.contentOffset = currentPageOffset;
+        self.currentPage = self.currentPage;
+        [UIView animateWithDuration:2 animations:^{
+            super.contentOffset = nextPageOffset;
+        } completion:^(BOOL finished) {
+            self.currentPage = nextPageIndex;
+            self.userInteractionEnabled = YES;
+            /*if (!self.infiniteScroll) {
+                super.contentOffset = nextPageOffset;
+            }*/
+        }];
+    }
+}
+
+-(void)scrollToPreviousPage {
+    int nextPageIndex = self.currentPage - 1;
+    CGPoint currentPageOffset;
+    CGPoint nextPageOffset;
+    
+    if (self.infiniteScroll) {
+        currentPageOffset = CGPointMake(self.frame.size.width, 0);
+        nextPageOffset = CGPointMake(0, 0);
+    }
+    else {
+        currentPageOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
+        nextPageOffset = CGPointMake(self.frame.size.width * nextPageIndex, 0);
+    }
+    
+    if (self.userIsInteractingWithView) {
+        self.contentOffset = nextPageOffset;
+        self.currentPage = nextPageIndex;
+    }
+    else {
+        self.userInteractionEnabled = NO;
+        super.contentOffset = currentPageOffset;
+        self.currentPage = self.currentPage;
+        [UIView animateWithDuration:2 animations:^{
+            super.contentOffset = nextPageOffset;
+        } completion:^(BOOL finished) {
+            self.currentPage = nextPageIndex;
+            self.userInteractionEnabled = YES;
+            /*if (!self.infiniteScroll) {
+             super.contentOffset = nextPageOffset;
+             }*/
+        }];
+    }
 }
 
 #pragma mark - Getter methods

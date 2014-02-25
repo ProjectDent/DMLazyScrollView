@@ -31,4 +31,7 @@
 
 @property (nonatomic) BOOL infiniteScroll;
 
+-(void)scrollToNextPage;
+-(void)scrollToPreviousPage;
+
 @end
