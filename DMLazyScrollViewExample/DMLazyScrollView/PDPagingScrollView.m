@@ -148,6 +148,8 @@
 
 -(void)setContentOffset:(CGPoint)contentOffset {
     [super setContentOffset:contentOffset];
+    _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+
     
     [self setNeedsLayout];
 }
