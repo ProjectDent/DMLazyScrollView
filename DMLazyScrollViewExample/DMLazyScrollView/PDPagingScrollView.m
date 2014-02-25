@@ -282,30 +282,10 @@
         self.currentPage = nextPageIndex;
     }
     else {
-//        self.userInteractionEnabled = NO;
         super.contentOffset = currentPageOffset;
         self.currentPage = self.currentPage;
         CGRect rect = CGRectMake(nextPageOffset.x, nextPageOffset.y, self.frame.size.width, self.frame.size.height);
         [self scrollRectToVisible:rect animated:YES];
-        
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC);
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-            
-            NSLog(@"current page: %i", self.currentPage);
-            NSLog(@"next page index: %i", nextPageIndex);
-//
-//            self.currentPage = nextPageIndex;
-//            self.userInteractionEnabled = YES;
-    
-        });
-    
-        /*
-        [UIView animateWithDuration:0.3 animations:^{
-            super.contentOffset = nextPageOffset;
-        } completion:^(BOOL finished) {
-            self.currentPage = nextPageIndex;
-            self.userInteractionEnabled = YES;
-        }];*/
     }
 }
 
