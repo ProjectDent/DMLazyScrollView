@@ -72,91 +72,25 @@
 
 #pragma mark - Layout methods
 
--(void)layoutSubviews {
-    [super layoutSubviews];
+-(void)setupViews {
+    
+    int firstVisibleViewIndex;
     
     if (self.infiniteScroll) {
-        
-        self.contentSize = CGSizeMake(self.frame.size.width * 4, self.frame.size.height);
-        
-        int firstVisibleViewIndex = self.fakeCurrentPage;
-        
         if (self.contentOffset.x < self.frame.size.width) {
             firstVisibleViewIndex = self.fakeCurrentPage - 1;
         }
-        
-        if (firstVisibleViewIndex >= 0) {
-            NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
-            UIView *previousView;
-            if ([self.views objectForKey:key]) {
-                previousView = [self.views objectForKey:key];
-            } else {
-                previousView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
-                if (previousView) {
-                    [self.views setObject:previousView forKey:key];
-                }
-            }
-            
-            if (self.previousView != previousView && self.previousView != self.nextView) {
-                [self.previousView removeFromSuperview];
-            }
-            
-            self.previousView = previousView;
-            
-            if (self.previousView.superview != self) {
-                [self addSubview:self.previousView];
-            }
+        else {
+            firstVisibleViewIndex = self.fakeCurrentPage;
         }
-        
-        if (firstVisibleViewIndex + 1 < self.numberOfPages) {
-            
-            NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex + 1];
-            UIView *nextView;
-            if ([self.views objectForKey:key]) {
-                nextView = [self.views objectForKey:key];
-            } else {
-                nextView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex + 1].view;
-                if (nextView) {
-                    [self.views setObject:nextView forKey:key];
-                }
-            }
-            
-            if (self.nextView != nextView && self.nextView != self.previousView) {
-                [self.nextView removeFromSuperview];
-            }
-            
-            self.nextView = nextView;
-            
-            if (self.nextView.superview != self) {
-                [self addSubview:self.nextView];
-            }
+    } else {
+        self.contentSize = CGSizeMake(self.numberOfPages * self.frame.size.width, self.frame.size.height);
+        if (self.contentOffset.x < self.frame.size.width * self.currentPage) {
+            firstVisibleViewIndex = self.currentPage - 1;
         }
         else {
-            self.nextView = nil;
+            firstVisibleViewIndex = self.currentPage;
         }
-        
-        if (firstVisibleViewIndex == self.fakeCurrentPage) {
-            self.previousView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
-            self.nextView.frame = CGRectMake(self.frame.size.width * 2, 0, self.frame.size.width, self.frame.size.height);
-        }
-        else {
-            self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-            self.nextView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
-        }
-        
-        
-        
-    }
-    else {
-    
-    int firstVisibleViewIndex = self.currentPage;
-    
-    self.contentSize = CGSizeMake(self.numberOfPages * self.frame.size.width, self.frame.size.height);
-    if (self.contentOffset.x < self.frame.size.width * self.currentPage) {
-        firstVisibleViewIndex = self.currentPage - 1;
-    }
-    else {
-        firstVisibleViewIndex = self.currentPage;
     }
     
     if (firstVisibleViewIndex >= 0) {
@@ -166,7 +100,9 @@
             previousView = [self.views objectForKey:key];
         } else {
             previousView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
-            [self.views setObject:previousView forKey:key];
+            if (previousView) {
+                [self.views setObject:previousView forKey:key];
+            }
         }
         
         if (self.previousView != previousView && self.previousView != self.nextView) {
@@ -188,7 +124,9 @@
             nextView = [self.views objectForKey:key];
         } else {
             nextView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex + 1].view;
-            [self.views setObject:nextView forKey:key];
+            if (nextView) {
+                [self.views setObject:nextView forKey:key];
+            }
         }
         
         if (self.nextView != nextView && self.nextView != self.previousView) {
@@ -205,9 +143,32 @@
         self.nextView = nil;
     }
     
-    self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
-    self.nextView.frame = CGRectMake((firstVisibleViewIndex + 1) * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+    if (self.infiniteScroll) {
+        if (firstVisibleViewIndex == self.fakeCurrentPage) {
+            self.previousView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+            self.nextView.frame = CGRectMake(self.frame.size.width * 2, 0, self.frame.size.width, self.frame.size.height);
+        }
+        else {
+            self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+            self.nextView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+        }
+    } else {
+        self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+        self.nextView.frame = CGRectMake((firstVisibleViewIndex + 1) * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
     }
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
+    
+    if (self.infiniteScroll) {
+        self.contentSize = CGSizeMake(self.frame.size.width * 4, self.frame.size.height);
+    }
+    else {
+        self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
+    }
+    
+    [self setupViews];
 }
 
 #pragma mark - UIScrollViewDelegate methods
@@ -229,9 +190,9 @@
 
 -(void)setCurrentPage:(int)currentPage animated:(BOOL)animated {
     _currentPage = currentPage;
-    self.fakeCurrentPage = currentPage;
     
     if (self.infiniteScroll) {
+        self.fakeCurrentPage = currentPage;
         
         self.contentOffset = CGPointMake(self.frame.size.width, 0);
         
@@ -279,15 +240,13 @@
             super.contentOffset = CGPointMake(self.contentOffset.x - self.frame.size.width, 0);
             self.fakeCurrentPage++;
         }
-    } else {
-        self.fakeCurrentPage = _currentPage;
     }
 
     if ([self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
         [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
     }
     
-    [self setNeedsLayout];
+    //[self setupViews];
 }
 
 @end
