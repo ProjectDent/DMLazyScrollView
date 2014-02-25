@@ -207,19 +207,6 @@
 }
 
 #pragma mark - UIScrollViewDelegate methods
-/*
--(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [self setNeedsLayout];
-    
-    NSLog(@"index: %i", _currentPage);
-    NSLog(@"expected x: %f", self.frame.size.width * _currentPage);
-    NSLog(@"actual: %f", self.contentOffset.x);
-    
-    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
-        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
-    }
-    
-}*/
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.userIsInteractingWithView = YES;
@@ -354,11 +341,11 @@
     float expectedX = self.frame.size.width * _currentPage;
     float difference = self.contentOffset.x - expectedX;
     
+    self.currentPageOffset = difference / self.frame.size.width;
+    
     if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
         [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
     }
-    
-    self.currentPageOffset = difference / self.frame.size.width;
     
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {

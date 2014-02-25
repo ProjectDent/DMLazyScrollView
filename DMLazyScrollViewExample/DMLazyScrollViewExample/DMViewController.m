@@ -63,11 +63,9 @@
 }
 
 -(void)scrollView:(PDPagingScrollView *)scrollView didScrollWithUserDrivenInteraction:(BOOL)userDriven {
-    NSLog(@"offset: %f", scrollView.currentPageOffset);
 }
 
 -(void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex {
-    NSLog(@"current page changed: %i", currentPageIndex);
 }
 
 -(UIViewController *)scrollView:(PDPagingScrollView *)scrollView viewControllerAtIndex:(int)index {
