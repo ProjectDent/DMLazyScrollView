@@ -12,14 +12,8 @@
 @class PDPagingScrollView;
 
 @protocol PDPagingScrollViewDelegate <NSObject>
-@optional/*
-- (void)lazyScrollViewWillBeginDragging:(DMLazyScrollView *)pagingView;
-//Called whenever it scrolls: through user manipulation, setup, or self-driven animation.
-- (void)lazyScrollViewDidScroll:(DMLazyScrollView *)pagingView at:(CGPoint) visibleOffset withSelfDrivenAnimation:(BOOL)selfDrivenAnimation;
-- (void)lazyScrollViewDidEndDragging:(DMLazyScrollView *)pagingView;
-- (void)lazyScrollViewWillBeginDecelerating:(DMLazyScrollView *)pagingView;
-- (void)lazyScrollViewDidEndDecelerating:(DMLazyScrollView *)pagingView atPageIndex:(NSInteger)pageIndex;
-- (void)lazyScrollView:(DMLazyScrollView *)pagingView currentPageChanged:(NSInteger)currentPageIndex;*/
+@optional
+- (void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex;
 @end
 
 @protocol PDPagingScrollViewDataSource <NSObject>
