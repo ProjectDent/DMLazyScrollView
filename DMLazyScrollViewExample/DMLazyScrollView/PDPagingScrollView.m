@@ -269,10 +269,18 @@
 
 #pragma mark - Setter methods
 
+-(void)setInfiniteScroll:(BOOL)infiniteScroll {
+    _infiniteScroll = infiniteScroll;
+    
+    [self setNeedsLayout];
+}
+
 -(void)setFrame:(CGRect)frame {
+    int currentPage = _currentPage;
+
     [super setFrame:frame];
     
-    self.currentPage = _currentPage;
+    self.currentPage = currentPage;
     
     [self setNeedsLayout];
 }
@@ -283,14 +291,14 @@
     if (self.infiniteScroll) {
         self.fakeCurrentPage = currentPage;
         
-        self.contentOffset = CGPointMake(self.frame.size.width, 0);
+        super.contentOffset = CGPointMake(self.frame.size.width, 0);
         
         [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
         
         [self layoutSubviews];
     }
     else {
-        self.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
+        super.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
         
         [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
     }
@@ -308,6 +316,10 @@
 
 -(void)setContentOffset:(CGPoint)contentOffset {
     [super setContentOffset:contentOffset];
+    
+    if (self.frame.size.width == 0) {
+        return;
+    }
     
     _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
     

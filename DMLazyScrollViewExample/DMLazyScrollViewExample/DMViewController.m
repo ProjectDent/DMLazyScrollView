@@ -28,21 +28,8 @@
     scrollView.layer.masksToBounds = NO;
     scrollView.layer.borderColor = [UIColor blackColor].CGColor;
     scrollView.layer.borderWidth = 2.0;
-    
-    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
-    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-
-        [scrollView scrollToNextPage];
-    
-    });
-    
-    dispatch_time_t popTime2 = dispatch_time(DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC);
-    dispatch_after(popTime2, dispatch_get_main_queue(), ^(void){
-        
-        [scrollView scrollToPreviousPage];
-        
-    });
-    
+    scrollView.infiniteScroll = YES;
+    scrollView.currentPage = 4;
     
     //lazyScrollView.currentPage = 4;
     //[lazyScrollView setEnableCircularScroll:YES];
