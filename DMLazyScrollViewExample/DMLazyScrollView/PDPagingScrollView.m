@@ -114,6 +114,7 @@
     }
     
     if (self.hasPreviouslySetUpFirstVisibleView && firstVisibleViewIndex == self.previousFirstVisibleViewIndex) {
+        [self setupInfiniteScrollFrameWithFirstVisibleViewIndex:firstVisibleViewIndex];
         return;
     }
     
@@ -182,6 +183,15 @@
     self.previousFirstVisibleViewIndex = firstVisibleViewIndex;
     
     if (self.infiniteScroll) {
+        [self setupInfiniteScrollFrameWithFirstVisibleViewIndex:firstVisibleViewIndex];
+    } else {
+        self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+        self.nextView.frame = CGRectMake((firstVisibleViewIndex + 1) * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+    }
+}
+
+-(void)setupInfiniteScrollFrameWithFirstVisibleViewIndex:(int)firstVisibleViewIndex {
+    if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
             self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
         }
@@ -195,9 +205,6 @@
                 self.nextView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
             }
         }
-    } else {
-        self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
-        self.nextView.frame = CGRectMake((firstVisibleViewIndex + 1) * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
     }
 }
 
