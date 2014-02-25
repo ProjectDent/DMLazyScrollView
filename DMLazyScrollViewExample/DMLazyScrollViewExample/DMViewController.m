@@ -7,11 +7,11 @@
 //
 
 #import "DMViewController.h"
-#import "DMLazyScrollView.h"
+#import "PDPagingScrollView.h"
 
 
-@interface DMViewController () <DMLazyScrollViewDelegate, DMLazyScrollViewDataSource> {
-    DMLazyScrollView* lazyScrollView;
+@interface DMViewController () <PDPagingScrollViewDelegate, PDPagingScrollViewDataSource> {
+    PDPagingScrollView* scrollView;
     NSMutableArray*    viewControllerArray;
 }
 @end
@@ -22,17 +22,17 @@
     [super viewDidLoad];
     
     // PREPARE LAZY VIEW
-    lazyScrollView = [[DMLazyScrollView alloc] init];
-    lazyScrollView.dataSource = self;
-    lazyScrollView.layer.masksToBounds = NO;
-    lazyScrollView.layer.borderColor = [UIColor blackColor].CGColor;
-    lazyScrollView.layer.borderWidth = 2.0;
+    scrollView = [[PDPagingScrollView alloc] init];
+    scrollView.dataSource = self;
+    scrollView.layer.masksToBounds = NO;
+    scrollView.layer.borderColor = [UIColor blackColor].CGColor;
+    scrollView.layer.borderWidth = 2.0;
     //lazyScrollView.currentPage = 4;
     //[lazyScrollView setEnableCircularScroll:YES];
     //[lazyScrollView setAutoPlay:YES];
     
    // lazyScrollView.controlDelegate = self;
-    [self.view addSubview:lazyScrollView];
+    [self.view addSubview:scrollView];
 //    
 //    // MOVE BY 3 FORWARD
 //    UIButton*btn_moveForward = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -55,7 +55,7 @@
     // Dispose of any resources that can be recreated.
 }
 
--(UIViewController *)lazyScrollView:(DMLazyScrollView *)scrollView viewControllerAtIndex:(int)index {
+-(UIViewController *)scrollView:(PDPagingScrollView *)scrollView viewControllerAtIndex:(int)index {
     /*if (index > viewControllerArray.count || index < 0) return nil;
     id res = [viewControllerArray objectAtIndex:index];
     if (res == [NSNull null]) {*/
@@ -80,19 +80,14 @@
     return res;*/
 }
 
--(int)numberOfPagesInLazyScrollView:(DMLazyScrollView *)scrollView {
+-(int)numberOfPagesInScrollView:(PDPagingScrollView *)scrollView {
     return 10;
 }
 
 -(void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    lazyScrollView.frame = CGRectMake(200, 200, 200, 200);
+    scrollView.frame = CGRectMake(200, 200, 200, 200);
 }
 
-/*
-- (void)lazyScrollViewDidEndDragging:(DMLazyScrollView *)pagingView {
-    NSLog(@"Now visible: %@",lazyScrollView.visibleViewController);
-}
-*/
 @end

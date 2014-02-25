@@ -9,37 +9,35 @@
 
 #import <UIKit/UIKit.h>
 
-@class DMLazyScrollView;
+@class PDPagingScrollView;
 
-@protocol DMLazyScrollViewDelegate <NSObject>
-@optional
+@protocol PDPagingScrollViewDelegate <NSObject>
+@optional/*
 - (void)lazyScrollViewWillBeginDragging:(DMLazyScrollView *)pagingView;
 //Called whenever it scrolls: through user manipulation, setup, or self-driven animation.
 - (void)lazyScrollViewDidScroll:(DMLazyScrollView *)pagingView at:(CGPoint) visibleOffset withSelfDrivenAnimation:(BOOL)selfDrivenAnimation;
 - (void)lazyScrollViewDidEndDragging:(DMLazyScrollView *)pagingView;
 - (void)lazyScrollViewWillBeginDecelerating:(DMLazyScrollView *)pagingView;
 - (void)lazyScrollViewDidEndDecelerating:(DMLazyScrollView *)pagingView atPageIndex:(NSInteger)pageIndex;
-- (void)lazyScrollView:(DMLazyScrollView *)pagingView currentPageChanged:(NSInteger)currentPageIndex;
+- (void)lazyScrollView:(DMLazyScrollView *)pagingView currentPageChanged:(NSInteger)currentPageIndex;*/
 @end
 
-@protocol DMLazyScrollViewDataSource <NSObject>
+@protocol PDPagingScrollViewDataSource <NSObject>
 
--(UIViewController *)lazyScrollView:(DMLazyScrollView *)scrollView viewControllerAtIndex:(int)index;
--(int)numberOfPagesInLazyScrollView:(DMLazyScrollView *)scrollView;
+-(UIViewController *)scrollView:(PDPagingScrollView *)scrollView viewControllerAtIndex:(int)index;
+-(int)numberOfPagesInScrollView:(PDPagingScrollView *)scrollView;
 
 @end
 
-@interface DMLazyScrollView : UIScrollView
+@interface PDPagingScrollView : UIScrollView <UIScrollViewDelegate>
 
-@property (nonatomic, weak) id <DMLazyScrollViewDataSource> dataSource;
+@property (nonatomic, weak) id <PDPagingScrollViewDataSource> dataSource;
 
-@property (nonatomic, weak)   id<DMLazyScrollViewDelegate>    controlDelegate;
+@property (nonatomic, weak)   id<PDPagingScrollViewDelegate>    controlDelegate;
 
 @property (nonatomic) int currentPage;
 
 -(void)setCurrentPage:(int)currentPage animated:(BOOL)animated;
-
-@property (nonatomic) BOOL infiniteScroll;
 
 
 
