@@ -87,7 +87,7 @@
 #pragma mark - Layout methods
 
 -(void)setupViews {
-    
+    NSLog(@"setup views");
     int firstVisibleViewIndex;
     
     if (self.infiniteScroll) {
@@ -98,7 +98,6 @@
             firstVisibleViewIndex = self.fakeCurrentPage;
         }
     } else {
-        self.contentSize = CGSizeMake(self.numberOfPages * self.frame.size.width, self.frame.size.height);
         if (self.contentOffset.x < self.frame.size.width * self.currentPage) {
             firstVisibleViewIndex = self.currentPage - 1;
         }
@@ -288,10 +287,6 @@
 
 #pragma mark - Setter methods
 
--(void)setFakeCurrentPage:(int)fakeCurrentPage {
-    _fakeCurrentPage = fakeCurrentPage;
-}
-
 -(void)setInfiniteScroll:(BOOL)infiniteScroll {
     _infiniteScroll = infiniteScroll;
     
@@ -314,7 +309,6 @@
 }
 
 -(void)setCurrentPage:(int)currentPage {
-    
     _currentPage = currentPage;
     
     if (self.infiniteScroll) {
@@ -374,7 +368,6 @@
             }
         }
     }
-    
     
     BOOL isDifferent = self.lastReportedCurrentPage != self.currentPage;
     
