@@ -30,6 +30,7 @@
     scrollView.layer.borderWidth = 2.0;
     scrollView.infiniteScroll = YES;
     scrollView.currentPage = 4;
+    scrollView.controlDelegate = self;
     
     //lazyScrollView.currentPage = 4;
     //[lazyScrollView setEnableCircularScroll:YES];
@@ -37,6 +38,8 @@
     
    // lazyScrollView.controlDelegate = self;
     [self.view addSubview:scrollView];
+    
+    
 //    
 //    // MOVE BY 3 FORWARD
 //    UIButton*btn_moveForward = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -57,6 +60,14 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)scrollView:(PDPagingScrollView *)scrollView didScrollWithUserDrivenInteraction:(BOOL)userDriven {
+//    NSLog(@"did scroll!");
+}
+
+-(void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex {
+    NSLog(@"current page changed: %i", currentPageIndex);
 }
 
 -(UIViewController *)scrollView:(PDPagingScrollView *)scrollView viewControllerAtIndex:(int)index {
