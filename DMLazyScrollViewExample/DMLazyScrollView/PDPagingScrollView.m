@@ -22,6 +22,8 @@
 @property (nonatomic) BOOL settingFrame;
 @property (nonatomic) int lastReportedCurrentPage;
 
+@property (nonatomic) int previousFirstVisibleViewIndex;
+@property (nonatomic) BOOL hasPreviouslySetUpFirstVisibleView;
 @end
 
 @implementation PDPagingScrollView
@@ -110,6 +112,11 @@
         firstVisibleViewIndex = self.numberOfPages - 1;
     }
     
+    if (self.hasPreviouslySetUpFirstVisibleView && firstVisibleViewIndex == self.previousFirstVisibleViewIndex) {
+        return;
+    }
+    
+    self.hasPreviouslySetUpFirstVisibleView = YES;
     if (firstVisibleViewIndex >= 0) {
         NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
         UIView *previousView;
@@ -169,6 +176,7 @@
         self.nextView = nil;
     }
     
+    self.previousFirstVisibleViewIndex = firstVisibleViewIndex;
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
             self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
