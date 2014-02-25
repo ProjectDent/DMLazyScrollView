@@ -79,6 +79,8 @@
         self.bounces = YES;
     }
     
+    [self setupContentSize];
+    
     [self setNeedsLayout];
 }
 
@@ -188,9 +190,7 @@
     }
 }
 
--(void)layoutSubviews {
-    [super layoutSubviews];
-    
+-(void)setupContentSize {
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
             self.contentSize = self.bounds.size;
@@ -202,6 +202,10 @@
     else {
         self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
     }
+}
+
+-(void)layoutSubviews {
+    [super layoutSubviews];
     
     [self setupViews];
 }
@@ -301,6 +305,8 @@
     
     self.settingFrame = NO;
     self.currentPage = currentPage;
+    
+    [self setupContentSize];
     
     [self setNeedsLayout];
     
