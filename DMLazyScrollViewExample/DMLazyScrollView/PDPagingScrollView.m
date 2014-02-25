@@ -27,15 +27,36 @@
 -(id)init {
     self = [super init];
     if (self) {
-        self.pagingEnabled = YES;
-        self.delegate = self;
-        self.showsHorizontalScrollIndicator = NO;
-        self.showsVerticalScrollIndicator = NO;
-        self.currentPage = 0;
-        
-        self.views = [NSMutableDictionary new];
+        [self initialSetupPagingScrollView];
     }
     return self;
+}
+
+-(id)initWithCoder:(NSCoder *)aDecoder {
+    self = [super initWithCoder:aDecoder];
+    if (self) {
+        [self initialSetupPagingScrollView];
+    }
+    return self;
+}
+
+-(id)initWithFrame:(CGRect)frame {
+    self = [super initWithFrame:frame];
+    if (self) {
+        [self initialSetupPagingScrollView];
+    }
+    
+    return self;
+}
+
+-(void)initialSetupPagingScrollView {
+    self.pagingEnabled = YES;
+    self.delegate = self;
+    self.showsHorizontalScrollIndicator = NO;
+    self.showsVerticalScrollIndicator = NO;
+    self.currentPage = 0;
+    
+    self.views = [NSMutableDictionary new];
 }
 
 #pragma mark - DataSource methods
