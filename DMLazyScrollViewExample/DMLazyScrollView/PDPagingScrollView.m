@@ -59,7 +59,7 @@
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
     self.currentPage = 0;
-    self.infiniteScroll = NO;
+    self.infiniteScroll = YES;
     
     self.views = [NSMutableDictionary new];
 }
@@ -203,16 +203,31 @@
 
 #pragma mark - Animation methods
 
--(void)scrollToNextPage {
-    int nextPageIndex = self.currentPage + 1;
+-(void)scrollToPageWithIndexDifference:(int)indexDifference {
+    
+    int nextPageIndex = self.currentPage + indexDifference;
     CGPoint currentPageOffset;
     CGPoint nextPageOffset;
     
     if (self.infiniteScroll) {
+        if (nextPageIndex < 0) {
+            nextPageIndex = self.numberOfPages - nextPageIndex;
+        }
+        else if (nextPageIndex > self.numberOfPages - 1) {
+            nextPageIndex = nextPageIndex - self.numberOfPages;
+        }
+        
         currentPageOffset = CGPointMake(self.frame.size.width, 0);
-        nextPageOffset = CGPointMake(self.frame.size.width * 2, 0);
+        nextPageOffset = CGPointMake(self.frame.size.width * (indexDifference + 1), 0);
     }
     else {
+        if (nextPageIndex < 0) {
+            nextPageIndex = 0;
+        }
+        else if (nextPageIndex > self.numberOfPages - 1) {
+            nextPageIndex = self.numberOfPages - 1;
+        }
+        
         currentPageOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
         nextPageOffset = CGPointMake(self.frame.size.width * nextPageIndex, 0);
     }
@@ -230,45 +245,16 @@
         } completion:^(BOOL finished) {
             self.currentPage = nextPageIndex;
             self.userInteractionEnabled = YES;
-            /*if (!self.infiniteScroll) {
-                super.contentOffset = nextPageOffset;
-            }*/
         }];
     }
 }
 
+-(void)scrollToNextPage {
+    [self scrollToPageWithIndexDifference:1];
+}
+
 -(void)scrollToPreviousPage {
-    int nextPageIndex = self.currentPage - 1;
-    CGPoint currentPageOffset;
-    CGPoint nextPageOffset;
-    
-    if (self.infiniteScroll) {
-        currentPageOffset = CGPointMake(self.frame.size.width, 0);
-        nextPageOffset = CGPointMake(0, 0);
-    }
-    else {
-        currentPageOffset = CGPointMake(self.frame.size.width * self.currentPage, 0);
-        nextPageOffset = CGPointMake(self.frame.size.width * nextPageIndex, 0);
-    }
-    
-    if (self.userIsInteractingWithView) {
-        self.contentOffset = nextPageOffset;
-        self.currentPage = nextPageIndex;
-    }
-    else {
-        self.userInteractionEnabled = NO;
-        super.contentOffset = currentPageOffset;
-        self.currentPage = self.currentPage;
-        [UIView animateWithDuration:2 animations:^{
-            super.contentOffset = nextPageOffset;
-        } completion:^(BOOL finished) {
-            self.currentPage = nextPageIndex;
-            self.userInteractionEnabled = YES;
-            /*if (!self.infiniteScroll) {
-             super.contentOffset = nextPageOffset;
-             }*/
-        }];
-    }
+    [self scrollToPageWithIndexDifference:-1];
 }
 
 #pragma mark - Getter methods
