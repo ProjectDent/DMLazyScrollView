@@ -57,7 +57,7 @@
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
     self.currentPage = 0;
-    self.infiniteScroll = YES;
+    self.infiniteScroll = NO;
     
     self.views = [NSMutableDictionary new];
 }
@@ -93,6 +93,10 @@
         }
     }
     
+    if (self.infiniteScroll && firstVisibleViewIndex < 0) {
+        firstVisibleViewIndex = self.numberOfPages - 1;
+    }
+    
     if (firstVisibleViewIndex >= 0) {
         NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
         UIView *previousView;
@@ -116,14 +120,23 @@
         }
     }
     
-    if (firstVisibleViewIndex + 1 < self.numberOfPages) {
+    int nextVisibleViewIndex;
+    
+    if (self.infiniteScroll && firstVisibleViewIndex + 1 >= self.numberOfPages) {
+        nextVisibleViewIndex = 0;
+    }
+    else {
+        nextVisibleViewIndex = firstVisibleViewIndex + 1;
+    }
+    
+    if (nextVisibleViewIndex < self.numberOfPages) {
         
-        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex + 1];
+        NSString *key = [NSString stringWithFormat:@"%i", nextVisibleViewIndex];
         UIView *nextView;
         if ([self.views objectForKey:key]) {
             nextView = [self.views objectForKey:key];
         } else {
-            nextView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex + 1].view;
+            nextView = [self.dataSource scrollView:self viewControllerAtIndex:nextVisibleViewIndex].view;
             if (nextView) {
                 [self.views setObject:nextView forKey:key];
             }
@@ -239,13 +252,21 @@
     
     if (self.infiniteScroll) {
         if (self.contentOffset.x < self.frame.size.width * 0.5) {
-            NSLog(@"less than");
             super.contentOffset = CGPointMake(self.contentOffset.x + self.frame.size.width, 0);
-            self.fakeCurrentPage--;
+            if (self.fakeCurrentPage - 1 < 0) {
+                self.fakeCurrentPage = self.numberOfPages - 1;
+            }
+            else {
+                self.fakeCurrentPage--;
+            }
         } else if (self.contentOffset.x > self.frame.size.width * 1.5) {
-            NSLog(@"more than");
             super.contentOffset = CGPointMake(self.contentOffset.x - self.frame.size.width, 0);
-            self.fakeCurrentPage++;
+            if (self.fakeCurrentPage + 1 >= self.numberOfPages) {
+                self.fakeCurrentPage = 0;
+            }
+            else {
+                self.fakeCurrentPage++;
+            }
         }
     }
 
