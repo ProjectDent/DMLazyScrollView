@@ -19,6 +19,8 @@
 @property (nonatomic) int fakeCurrentPage;
 
 @property (nonatomic) BOOL userIsInteractingWithView;
+@property (nonatomic) BOOL settingFrame;
+@property (nonatomic) int lastReportedCurrentPage;
 
 @end
 
@@ -60,6 +62,7 @@
     self.showsVerticalScrollIndicator = NO;
     self.currentPage = 0;
     self.infiniteScroll = NO;
+    self.settingFrame = NO;
     
     self.views = [NSMutableDictionary new];
 }
@@ -190,6 +193,9 @@
 
 -(void)scrollViewDidScroll:(UIScrollView *)scrollView {
     [self setNeedsLayout];
+    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
+        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
+    }
     
 }
 
@@ -269,6 +275,10 @@
 
 #pragma mark - Setter methods
 
+-(void)setFakeCurrentPage:(int)fakeCurrentPage {
+    _fakeCurrentPage = fakeCurrentPage;
+}
+
 -(void)setInfiniteScroll:(BOOL)infiniteScroll {
     _infiniteScroll = infiniteScroll;
     
@@ -276,36 +286,42 @@
 }
 
 -(void)setFrame:(CGRect)frame {
+    self.settingFrame = YES;
     int currentPage = _currentPage;
-
     [super setFrame:frame];
     
+    self.settingFrame = NO;
     self.currentPage = currentPage;
     
     [self setNeedsLayout];
+    
+    self.contentOffset = self.contentOffset;
 }
 
 -(void)setCurrentPage:(int)currentPage {
+    
+//    BOOL isDifferent = currentPage != _currentPage;
+    
     _currentPage = currentPage;
     
     if (self.infiniteScroll) {
         self.fakeCurrentPage = currentPage;
         
         super.contentOffset = CGPointMake(self.frame.size.width, 0);
-        
-        [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+        /*
+        if (isDifferent && [self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
+            [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+        }*/
         
         [self layoutSubviews];
     }
     else {
         super.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
-        
-        [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+        /*
+        if (isDifferent && [self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
+            [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+        }*/
     }
-}
-
--(void)setFakeCurrentPage:(int)fakeCurrentPage {
-    _fakeCurrentPage = fakeCurrentPage;
 }
 
 -(void)setDataSource:(id<PDPagingScrollViewDataSource>)dataSource {
@@ -342,9 +358,12 @@
             }
         }
     }
-
-    if ([self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
-        [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+    
+    BOOL isDifferent = self.lastReportedCurrentPage != self.currentPage;
+    
+    if (isDifferent && !self.settingFrame && [self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
+        [self.controlDelegate scrollView:self currentPageChanged:self.currentPage];
+        self.lastReportedCurrentPage = self.currentPage;
     }
 }
 

@@ -12,6 +12,7 @@
 @protocol PDPagingScrollViewDelegate <NSObject>
 @optional
 - (void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex;
+-(void)scrollView:(PDPagingScrollView *)scrollView didScrollWithUserDrivenInteraction:(BOOL)userDriven;
 @end
 
 @protocol PDPagingScrollViewDataSource <NSObject>
