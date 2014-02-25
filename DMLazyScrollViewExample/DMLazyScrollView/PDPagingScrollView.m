@@ -229,6 +229,14 @@
 }
 
 #pragma mark - UIScrollViewDelegate methods
+/*
+-(void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (!self.userIsInteractingWithView) {
+        if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
+            [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
+        }
+    }
+}*/
 
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.userIsInteractingWithView = YES;
@@ -274,15 +282,30 @@
         self.currentPage = nextPageIndex;
     }
     else {
-        self.userInteractionEnabled = NO;
+//        self.userInteractionEnabled = NO;
         super.contentOffset = currentPageOffset;
         self.currentPage = self.currentPage;
+        CGRect rect = CGRectMake(nextPageOffset.x, nextPageOffset.y, self.frame.size.width, self.frame.size.height);
+        [self scrollRectToVisible:rect animated:YES];
+        
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 0.3 * NSEC_PER_SEC);
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            
+            NSLog(@"current page: %i", self.currentPage);
+            NSLog(@"next page index: %i", nextPageIndex);
+//
+//            self.currentPage = nextPageIndex;
+//            self.userInteractionEnabled = YES;
+    
+        });
+    
+        /*
         [UIView animateWithDuration:0.3 animations:^{
             super.contentOffset = nextPageOffset;
         } completion:^(BOOL finished) {
             self.currentPage = nextPageIndex;
             self.userInteractionEnabled = YES;
-        }];
+        }];*/
     }
 }
 
@@ -362,10 +385,6 @@
     
     self.currentPageOffset = difference / self.frame.size.width;
     
-    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
-        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
-    }
-    
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
             super.contentOffset = CGPointMake(0, 0);
@@ -377,7 +396,7 @@
             else {
                 self.fakeCurrentPage--;
             }
-        } else if (self.contentOffset.x > self.frame.size.width * 1.5) {
+        } else if (self.contentOffset.x >= self.frame.size.width * 1.5) {
             super.contentOffset = CGPointMake(self.contentOffset.x - self.frame.size.width, 0);
             if (self.fakeCurrentPage + 1 >= self.numberOfPages) {
                 self.fakeCurrentPage = 0;
@@ -386,6 +405,10 @@
                 self.fakeCurrentPage++;
             }
         }
+    }
+    
+    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
+        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
     }
     
     BOOL isDifferent = self.lastReportedCurrentPage != self.currentPage;

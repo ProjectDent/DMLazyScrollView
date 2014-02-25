@@ -28,8 +28,7 @@
     scrollView.layer.masksToBounds = NO;
     scrollView.layer.borderColor = [UIColor blackColor].CGColor;
     scrollView.layer.borderWidth = 2.0;
-    scrollView.infiniteScroll = NO;
-    scrollView.currentPage = 4;
+    scrollView.infiniteScroll = YES;
     scrollView.controlDelegate = self;
     
     //lazyScrollView.currentPage = 4;
@@ -38,6 +37,12 @@
     
    // lazyScrollView.controlDelegate = self;
     [self.view addSubview:scrollView];
+    
+    dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
+    dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+        [scrollView scrollToNextPage];
+    
+    });
     
     
 //    
@@ -100,7 +105,7 @@
 -(void)viewDidLayoutSubviews {
     [super viewDidLayoutSubviews];
     
-    scrollView.frame = CGRectMake(200, 200, 200, 200);
+    scrollView.frame = CGRectMake(200, 200, 800, 100);
 }
 
 @end
