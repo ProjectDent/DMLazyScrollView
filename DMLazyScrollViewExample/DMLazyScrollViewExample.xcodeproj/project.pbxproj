@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		49CB282818BC954E0047C773 /* PDInfinitePagingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 49CB282718BC954E0047C773 /* PDInfinitePagingScrollView.m */; };
 		64E7A2831660D05F00DB5D9E /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E7A2821660D05F00DB5D9E /* UIKit.framework */; };
 		64E7A2851660D05F00DB5D9E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E7A2841660D05F00DB5D9E /* Foundation.framework */; };
 		64E7A2871660D05F00DB5D9E /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64E7A2861660D05F00DB5D9E /* CoreGraphics.framework */; };
@@ -23,6 +24,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		49CB282618BC954E0047C773 /* PDInfinitePagingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDInfinitePagingScrollView.h; path = DMLazyScrollView/PDInfinitePagingScrollView.h; sourceTree = "<group>"; };
+		49CB282718BC954E0047C773 /* PDInfinitePagingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDInfinitePagingScrollView.m; path = DMLazyScrollView/PDInfinitePagingScrollView.m; sourceTree = "<group>"; };
 		64E7A27E1660D05F00DB5D9E /* DMLazyScrollViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DMLazyScrollViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		64E7A2821660D05F00DB5D9E /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		64E7A2841660D05F00DB5D9E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -116,6 +119,8 @@
 			children = (
 				64E7A2A81660D06F00DB5D9E /* PDPagingScrollView.h */,
 				64E7A2A91660D06F00DB5D9E /* PDPagingScrollView.m */,
+				49CB282618BC954E0047C773 /* PDInfinitePagingScrollView.h */,
+				49CB282718BC954E0047C773 /* PDInfinitePagingScrollView.m */,
 			);
 			name = DMLazyScrollView;
 			path = ..;
@@ -200,6 +205,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				49CB282818BC954E0047C773 /* PDInfinitePagingScrollView.m in Sources */,
 				64E7A28F1660D05F00DB5D9E /* main.m in Sources */,
 				64E7A2931660D06000DB5D9E /* DMAppDelegate.m in Sources */,
 				64E7A29C1660D06000DB5D9E /* DMViewController.m in Sources */,
