@@ -258,7 +258,7 @@
         self.userInteractionEnabled = NO;
         super.contentOffset = currentPageOffset;
         self.currentPage = self.currentPage;
-        [UIView animateWithDuration:2 animations:^{
+        [UIView animateWithDuration:0.3 animations:^{
             super.contentOffset = nextPageOffset;
         } completion:^(BOOL finished) {
             self.currentPage = nextPageIndex;
