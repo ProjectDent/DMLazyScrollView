@@ -31,6 +31,4 @@
 
 @property (nonatomic) BOOL infiniteScroll;
 
--(void)setCurrentPage:(int)currentPage animated:(BOOL)animated;
-
 @end

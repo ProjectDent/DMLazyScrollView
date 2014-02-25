@@ -211,7 +211,7 @@
     [self setNeedsLayout];
 }
 
--(void)setCurrentPage:(int)currentPage animated:(BOOL)animated {
+-(void)setCurrentPage:(int)currentPage {
     _currentPage = currentPage;
     
     if (self.infiniteScroll) {
@@ -228,11 +228,6 @@
         
         [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
     }
-    
-}
-
--(void)setCurrentPage:(int)currentPage {
-    [self setCurrentPage:currentPage animated:NO];
 }
 
 -(void)setFakeCurrentPage:(int)fakeCurrentPage {
@@ -273,8 +268,6 @@
     if ([self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
         [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
     }
-    
-    //[self setupViews];
 }
 
 @end
