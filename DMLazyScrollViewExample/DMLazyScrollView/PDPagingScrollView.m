@@ -1,10 +1,8 @@
 //
-//  DMLazyScrollView.m
-//  Lazy Loading UIScrollView for iOS
+//  PDPagingScrollView.m
+//  Infinite paging UIScrollView for iOS
 //
-//  Created by Daniele Margutti (me@danielemargutti.com) on 24/11/12.
-//  Copyright (c) 2012 http://www.danielemargutti.com. All rights reserved.
-//  Distribuited under MIT License
+//  Created by Andrew Hart for Project Dent.
 //
 
 #import "PDPagingScrollView.h"
@@ -23,6 +21,8 @@
 @end
 
 @implementation PDPagingScrollView
+
+@synthesize currentPage = _currentPage;
 
 #pragma mark - Initialisation methods
 
@@ -178,12 +178,22 @@
     
 }
 
+#pragma mark - Getter methods
+
+-(int)currentPage {
+    if (self.infiniteScroll) {
+        return self.fakeCurrentPage;
+    }
+    
+    return _currentPage;
+}
+
 #pragma mark - Setter methods
 
 -(void)setFrame:(CGRect)frame {
     [super setFrame:frame];
     
-    self.currentPage = self.currentPage;
+    self.currentPage = _currentPage;
     
     [self setNeedsLayout];
 }
@@ -214,8 +224,6 @@
 
 -(void)setFakeCurrentPage:(int)fakeCurrentPage {
     _fakeCurrentPage = fakeCurrentPage;
-    
-    NSLog(@"fake current page: %i", fakeCurrentPage);
 }
 
 -(void)setDataSource:(id<PDPagingScrollViewDataSource>)dataSource {
@@ -227,7 +235,6 @@
 -(void)setContentOffset:(CGPoint)contentOffset {
     [super setContentOffset:contentOffset];
     
-    NSLog(@"offset: %f", self.contentOffset.x);
     _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
     
     if (self.infiniteScroll) {
