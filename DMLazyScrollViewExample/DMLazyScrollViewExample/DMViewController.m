@@ -28,7 +28,7 @@
     scrollView.layer.masksToBounds = NO;
     scrollView.layer.borderColor = [UIColor blackColor].CGColor;
     scrollView.layer.borderWidth = 2.0;
-    scrollView.infiniteScroll = YES;
+    scrollView.infiniteScroll = NO;
     scrollView.currentPage = 4;
     scrollView.controlDelegate = self;
     
@@ -63,11 +63,9 @@
 }
 
 -(void)scrollView:(PDPagingScrollView *)scrollView didScrollWithUserDrivenInteraction:(BOOL)userDriven {
-//    NSLog(@"did scroll!");
 }
 
 -(void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex {
-    NSLog(@"current page changed: %i", currentPageIndex);
 }
 
 -(UIViewController *)scrollView:(PDPagingScrollView *)scrollView viewControllerAtIndex:(int)index {

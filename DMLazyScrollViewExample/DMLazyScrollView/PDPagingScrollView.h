@@ -32,6 +32,8 @@
 
 @property (nonatomic) BOOL infiniteScroll;
 
+@property (nonatomic) float currentPageOffset;
+
 -(void)scrollToNextPage;
 -(void)scrollToPreviousPage;
 

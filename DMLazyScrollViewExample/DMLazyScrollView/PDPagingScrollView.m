@@ -208,14 +208,6 @@
 
 #pragma mark - UIScrollViewDelegate methods
 
--(void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    [self setNeedsLayout];
-    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
-        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
-    }
-    
-}
-
 -(void)scrollViewWillBeginDragging:(UIScrollView *)scrollView {
     self.userIsInteractingWithView = YES;
 }
@@ -317,27 +309,17 @@
 
 -(void)setCurrentPage:(int)currentPage {
     
-//    BOOL isDifferent = currentPage != _currentPage;
-    
     _currentPage = currentPage;
     
     if (self.infiniteScroll) {
         self.fakeCurrentPage = currentPage;
         
         super.contentOffset = CGPointMake(self.frame.size.width, 0);
-        /*
-        if (isDifferent && [self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
-            [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
-        }*/
         
         [self layoutSubviews];
     }
     else {
         super.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
-        /*
-        if (isDifferent && [self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
-            [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
-        }*/
     }
 }
 
@@ -355,6 +337,15 @@
     }
     
     _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
+    
+    float expectedX = self.frame.size.width * _currentPage;
+    float difference = self.contentOffset.x - expectedX;
+    
+    self.currentPageOffset = difference / self.frame.size.width;
+    
+    if ([self.controlDelegate respondsToSelector:@selector(scrollView:didScrollWithUserDrivenInteraction:)]) {
+        [self.controlDelegate scrollView:self didScrollWithUserDrivenInteraction:self.userIsInteractingWithView];
+    }
     
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
@@ -377,6 +368,7 @@
             }
         }
     }
+    
     
     BOOL isDifferent = self.lastReportedCurrentPage != self.currentPage;
     
