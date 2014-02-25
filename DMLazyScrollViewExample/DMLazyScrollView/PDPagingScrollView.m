@@ -59,7 +59,7 @@
     self.showsHorizontalScrollIndicator = NO;
     self.showsVerticalScrollIndicator = NO;
     self.currentPage = 0;
-    self.infiniteScroll = YES;
+    self.infiniteScroll = NO;
     
     self.views = [NSMutableDictionary new];
 }
