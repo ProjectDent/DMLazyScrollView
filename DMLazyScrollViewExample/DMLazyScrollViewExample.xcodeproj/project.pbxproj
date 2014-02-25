@@ -19,7 +19,7 @@
 		64E7A29C1660D06000DB5D9E /* DMViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E7A29B1660D06000DB5D9E /* DMViewController.m */; };
 		64E7A29F1660D06000DB5D9E /* DMViewController_iPhone.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64E7A29D1660D06000DB5D9E /* DMViewController_iPhone.xib */; };
 		64E7A2A21660D06000DB5D9E /* DMViewController_iPad.xib in Resources */ = {isa = PBXBuildFile; fileRef = 64E7A2A01660D06000DB5D9E /* DMViewController_iPad.xib */; };
-		64E7A2AA1660D06F00DB5D9E /* DMLazyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E7A2A91660D06F00DB5D9E /* DMLazyScrollView.m */; };
+		64E7A2AA1660D06F00DB5D9E /* PDPagingScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 64E7A2A91660D06F00DB5D9E /* PDPagingScrollView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,8 +40,8 @@
 		64E7A29B1660D06000DB5D9E /* DMViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DMViewController.m; sourceTree = "<group>"; };
 		64E7A29E1660D06000DB5D9E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DMViewController_iPhone.xib; sourceTree = "<group>"; };
 		64E7A2A11660D06000DB5D9E /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/DMViewController_iPad.xib; sourceTree = "<group>"; };
-		64E7A2A81660D06F00DB5D9E /* DMLazyScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DMLazyScrollView.h; path = DMLazyScrollView/DMLazyScrollView.h; sourceTree = "<group>"; };
-		64E7A2A91660D06F00DB5D9E /* DMLazyScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = DMLazyScrollView.m; path = DMLazyScrollView/DMLazyScrollView.m; sourceTree = "<group>"; };
+		64E7A2A81660D06F00DB5D9E /* PDPagingScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PDPagingScrollView.h; path = DMLazyScrollView/PDPagingScrollView.h; sourceTree = "<group>"; };
+		64E7A2A91660D06F00DB5D9E /* PDPagingScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PDPagingScrollView.m; path = DMLazyScrollView/PDPagingScrollView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,8 +114,8 @@
 		64E7A2BF166182A400DB5D9E /* DMLazyScrollView */ = {
 			isa = PBXGroup;
 			children = (
-				64E7A2A81660D06F00DB5D9E /* DMLazyScrollView.h */,
-				64E7A2A91660D06F00DB5D9E /* DMLazyScrollView.m */,
+				64E7A2A81660D06F00DB5D9E /* PDPagingScrollView.h */,
+				64E7A2A91660D06F00DB5D9E /* PDPagingScrollView.m */,
 			);
 			name = DMLazyScrollView;
 			path = ..;
@@ -203,7 +203,7 @@
 				64E7A28F1660D05F00DB5D9E /* main.m in Sources */,
 				64E7A2931660D06000DB5D9E /* DMAppDelegate.m in Sources */,
 				64E7A29C1660D06000DB5D9E /* DMViewController.m in Sources */,
-				64E7A2AA1660D06F00DB5D9E /* DMLazyScrollView.m in Sources */,
+				64E7A2AA1660D06F00DB5D9E /* PDPagingScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -330,6 +330,7 @@
 				64E7A2A71660D06000DB5D9E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
