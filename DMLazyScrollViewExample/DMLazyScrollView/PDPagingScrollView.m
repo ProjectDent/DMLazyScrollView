@@ -134,7 +134,7 @@
     
     self.contentOffset = CGPointMake(self.frame.size.width * currentPage, 0);
     
-    [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+    [self.delegate scrollView:self currentPageChanged:_currentPage];
     
 }
 
@@ -152,8 +152,8 @@
     [super setContentOffset:contentOffset];
     _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
 
-    if ([self.controlDelegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
-        [self.controlDelegate scrollView:self currentPageChanged:_currentPage];
+    if ([self.delegate respondsToSelector:@selector(scrollView:currentPageChanged:)]) {
+        [self.delegate scrollView:self currentPageChanged:_currentPage];
     }
     
     [self setNeedsLayout];

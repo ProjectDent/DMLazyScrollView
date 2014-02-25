@@ -11,7 +11,7 @@
 
 @class PDPagingScrollView;
 
-@protocol PDPagingScrollViewDelegate <NSObject>
+@protocol PDPagingScrollViewDelegate <NSObject, UIScrollViewDelegate>
 @optional
 - (void)scrollView:(PDPagingScrollView *)scrollView currentPageChanged:(NSInteger)currentPageIndex;
 @end
@@ -27,7 +27,7 @@
 
 @property (nonatomic, weak) id <PDPagingScrollViewDataSource> dataSource;
 
-@property (nonatomic, weak)   id<PDPagingScrollViewDelegate>    controlDelegate;
+@property (nonatomic, weak)   id<PDPagingScrollViewDelegate>    delegate;
 
 @property (nonatomic) int currentPage;
 
