@@ -24,6 +24,7 @@
 
 @property (nonatomic) int previousFirstVisibleViewIndex;
 @property (nonatomic) BOOL hasPreviouslySetUpFirstVisibleView;
+
 @end
 
 @implementation PDPagingScrollView
@@ -89,7 +90,7 @@
 #pragma mark - Layout methods
 
 -(void)setupViews {
-    NSLog(@"setup views");
+    
     int firstVisibleViewIndex;
     
     if (self.infiniteScroll) {
@@ -117,17 +118,18 @@
     }
     
     self.hasPreviouslySetUpFirstVisibleView = YES;
+    
     if (firstVisibleViewIndex >= 0) {
-        NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
+        /*NSString *key = [NSString stringWithFormat:@"%i", firstVisibleViewIndex];
         UIView *previousView;
         if ([self.views objectForKey:key]) {
             previousView = [self.views objectForKey:key];
-        } else {
-            previousView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
-            if (previousView) {
+        } else {*/
+        UIView *previousView = [self.dataSource scrollView:self viewControllerAtIndex:firstVisibleViewIndex].view;
+            /*if (previousView) {
                 [self.views setObject:previousView forKey:key];
             }
-        }
+        }*/
         
         if (self.previousView != previousView && self.previousView != self.nextView) {
             [self.previousView removeFromSuperview];
@@ -151,16 +153,17 @@
     
     if (nextVisibleViewIndex < self.numberOfPages) {
         
-        NSString *key = [NSString stringWithFormat:@"%i", nextVisibleViewIndex];
+       /* NSString *key = [NSString stringWithFormat:@"%i", nextVisibleViewIndex];
         UIView *nextView;
         if ([self.views objectForKey:key]) {
             nextView = [self.views objectForKey:key];
-        } else {
-            nextView = [self.dataSource scrollView:self viewControllerAtIndex:nextVisibleViewIndex].view;
-            if (nextView) {
+        } else {*/
+        UIView *nextView = [self.dataSource scrollView:self viewControllerAtIndex:nextVisibleViewIndex].view;
+            /*if (nextView) {
                 [self.views setObject:nextView forKey:key];
             }
         }
+        */
         
         if (self.nextView != nextView && self.nextView != self.previousView) {
             [self.nextView removeFromSuperview];
@@ -177,6 +180,7 @@
     }
     
     self.previousFirstVisibleViewIndex = firstVisibleViewIndex;
+    
     if (self.infiniteScroll) {
         if (self.numberOfPages < 2) {
             self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
