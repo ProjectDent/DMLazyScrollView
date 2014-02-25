@@ -72,6 +72,13 @@
 -(void)reloadData {
     self.numberOfPages = [self.dataSource numberOfPagesInScrollView:self];
     
+    if (self.numberOfPages < 2) {
+        self.bounces = NO;
+    }
+    else {
+        self.bounces = YES;
+    }
+    
     [self setNeedsLayout];
 }
 
@@ -162,13 +169,18 @@
     }
     
     if (self.infiniteScroll) {
-        if (firstVisibleViewIndex == self.fakeCurrentPage) {
-            self.previousView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
-            self.nextView.frame = CGRectMake(self.frame.size.width * 2, 0, self.frame.size.width, self.frame.size.height);
+        if (self.numberOfPages < 2) {
+            self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
         }
         else {
-            self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
-            self.nextView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+            if (firstVisibleViewIndex == self.fakeCurrentPage) {
+                self.previousView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+                self.nextView.frame = CGRectMake(self.frame.size.width * 2, 0, self.frame.size.width, self.frame.size.height);
+            }
+            else {
+                self.previousView.frame = CGRectMake(0, 0, self.frame.size.width, self.frame.size.height);
+                self.nextView.frame = CGRectMake(self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
+            }
         }
     } else {
         self.previousView.frame = CGRectMake(firstVisibleViewIndex * self.frame.size.width, 0, self.frame.size.width, self.frame.size.height);
@@ -180,7 +192,12 @@
     [super layoutSubviews];
     
     if (self.infiniteScroll) {
-        self.contentSize = CGSizeMake(self.frame.size.width * 4, self.frame.size.height);
+        if (self.numberOfPages < 2) {
+            self.contentSize = self.bounds.size;
+        }
+        else {
+            self.contentSize = CGSizeMake(self.frame.size.width * 4, self.frame.size.height);
+        }
     }
     else {
         self.contentSize = CGSizeMake(self.frame.size.width * self.numberOfPages, self.frame.size.height);
@@ -340,7 +357,9 @@
     _currentPage = roundf(self.contentOffset.x / self.frame.size.width);
     
     if (self.infiniteScroll) {
-        if (self.contentOffset.x < self.frame.size.width * 0.5) {
+        if (self.numberOfPages < 2) {
+            super.contentOffset = CGPointMake(0, 0);
+        } else if (self.contentOffset.x < self.frame.size.width * 0.5) {
             super.contentOffset = CGPointMake(self.contentOffset.x + self.frame.size.width, 0);
             if (self.fakeCurrentPage - 1 < 0) {
                 self.fakeCurrentPage = self.numberOfPages - 1;
